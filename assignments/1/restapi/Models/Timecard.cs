@@ -151,6 +151,15 @@ namespace restapi.Models
                 Reference = $"/timesheets/{UniqueIdentifier}/transitions"
             });
 
+            // todo: add if statement to make sure "correction" happens really
+            links.Add(new DocumentLink()
+            {
+                Method = Method.Get,
+                Type = ContentTypes.Correction,
+                Relationship = DocumentRelationship.Correction,
+                Reference = $"/timesheets/{UniqueIdentifier}/correction"
+            });
+
             if (this.Lines.Count > 0)
             {
                 links.Add(new DocumentLink()

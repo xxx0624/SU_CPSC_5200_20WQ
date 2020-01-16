@@ -274,6 +274,39 @@ namespace restapi.Controllers
             }
         }
 
+        [HttpGet("{id:guid}/correction")]
+        [Produces(ContentTypes.Transition)]
+        [ProducesResponseType(typeof(Transition), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(MissingTransitionError), 409)]
+        public IActionResult GetCorrection(Guid id)
+        {
+            logger.LogInformation($"Looking for timesheet {id}");
+
+            Timecard timecard = repository.Find(id);
+
+            if (timecard != null)
+            {
+                if (timecard.Status == TimecardStatus.Draft)
+                {
+                    var transition = timecard.Transitions
+                                        .Where(t => t.TransitionedTo == TimecardStatus.Draft)
+                                        .OrderByDescending(t => t.OccurredAt)
+                                        .FirstOrDefault();
+
+                    return Ok(transition);
+                }
+                else
+                {
+                    return StatusCode(409, new MissingTransitionError() { });
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost("{id:guid}/cancellation")]
         [Produces(ContentTypes.Transition)]
         [ProducesResponseType(typeof(Transition), 200)]

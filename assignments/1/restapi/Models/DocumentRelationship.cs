@@ -10,6 +10,8 @@ namespace restapi.Models
 
         Transitions,
 
-        Submittal
+        Submittal,
+
+        Correction
     }
 }
