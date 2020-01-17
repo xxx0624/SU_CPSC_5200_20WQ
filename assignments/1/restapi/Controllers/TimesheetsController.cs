@@ -116,6 +116,27 @@ namespace restapi.Controllers
             }
         }
 
+        [HttpGet("{id:guid}/lines/{lid:guid}")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(TimecardLine), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetOneLine(Guid id, Guid lid)
+        {
+            logger.LogInformation($"Looking for timesheet {id} with line {lid}");
+
+            Timecard timecard = repository.Find(id);
+
+            if (timecard != null)
+            {
+                if(timecard.HasLine(lid))
+                {
+                    var oneLine = timecard.Lines.FirstOrDefault(l => l.UniqueIdentifier == lid);
+                    return Ok(oneLine);
+                }
+            }
+            return NotFound();
+        }
+
         [HttpPost("{id:guid}/lines")]
         [Produces(ContentTypes.TimesheetLine)]
         [ProducesResponseType(typeof(TimecardLine), 200)]
@@ -136,6 +157,41 @@ namespace restapi.Controllers
 
                 var annotatedLine = timecard.AddLine(documentLine);
 
+                repository.Update(timecard);
+
+                return Ok(annotatedLine);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("{id:guid}/lines/{lid:guid}")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(TimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        public IActionResult ReplaceLine(Guid id, Guid lid, [FromBody] DocumentLine documentLine)
+        {
+            logger.LogInformation($"Looking for timesheet {id} with line {lid}");
+            
+            Timecard timecard = repository.Find(id);
+
+            if (timecard != null)
+            {
+                if (timecard.Status != TimecardStatus.Draft)
+                {
+                    return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if(timecard.HasLine(lid) == false)
+                {
+                    return NotFound();
+                }
+
+                var annotatedLine = timecard.UpdateLine(lid, documentLine);
+                
                 repository.Update(timecard);
 
                 return Ok(annotatedLine);
