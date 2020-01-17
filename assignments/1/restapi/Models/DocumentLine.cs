@@ -6,6 +6,15 @@ namespace restapi.Models
     {
         public DocumentLine() { }
 
+        public DocumentLine(TimecardLine line)
+        {
+            Week = line.Week;
+            Year = line.Year;
+            Day = line.Day;
+            Hours = line.Hours;
+            Project = line.Project;
+        }
+
         public int Week { get; set; }
 
         public int Year { get; set; }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using restapi.Models;
 
@@ -200,6 +201,42 @@ namespace restapi.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpPatch("{id:guid}/lines/{lid:guid}")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(TimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        public IActionResult UpdateLine(Guid id, Guid lid, [FromBody] JsonPatchDocument<DocumentLine> patchLine)
+        {
+            logger.LogInformation($"Looking for timesheet {id} with line {lid}");
+            
+            Timecard timecard = repository.Find(id);
+
+            if (timecard != null)
+            {
+                if (timecard.Status != TimecardStatus.Draft)
+                {
+                    return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if(timecard.HasLine(lid))
+                {
+                    var lineInDB = timecard.Lines.FirstOrDefault(l => l.UniqueIdentifier == lid);
+                    
+                    DocumentLine documentLine = new DocumentLine(lineInDB);
+                    
+                    patchLine.ApplyTo(documentLine);
+                    
+                    var annotatedLine = timecard.UpdateLine(lid, documentLine);
+                    
+                    repository.Update(timecard);
+
+                    return Ok(annotatedLine);
+                }
+            }
+            return NotFound();
         }
 
         [HttpGet("{id:guid}/transitions")]
