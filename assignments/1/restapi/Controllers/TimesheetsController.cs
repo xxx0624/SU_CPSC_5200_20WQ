@@ -540,6 +540,7 @@ namespace restapi.Controllers
         [Produces(ContentTypes.Transition)]
         [ProducesResponseType(typeof(Transition), 200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(NoAccessError), 403)]
         [ProducesResponseType(typeof(InvalidStateError), 409)]
         [ProducesResponseType(typeof(EmptyTimecardError), 409)]
         public IActionResult Approve(Guid id, [FromBody] Approval approval)
@@ -553,6 +554,11 @@ namespace restapi.Controllers
                 if (timecard.Status != TimecardStatus.Submitted)
                 {
                     return StatusCode(409, new InvalidStateError() { });
+                }
+
+                if(timecard.Employee == approval.Approver)
+                {
+                    return StatusCode(403, new NoAccessError() { });
                 }
 
                 var transition = new Transition(approval, TimecardStatus.Approved);
