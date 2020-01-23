@@ -13,8 +13,8 @@ namespace restapi.Controllers
         [ProducesResponseType(typeof(IDictionary<ApplicationRelationship, object>), 200)]
         public IDictionary<ApplicationRelationship, object> Get()
         {
-            var links = new List<DocumentLink>();
-            links.Add(new DocumentLink()
+            var timesheetsLinks = new List<DocumentLink>();
+            timesheetsLinks.Add(new DocumentLink()
             {
                 Method = Method.Get,
                 Type = ContentTypes.Timesheets,
@@ -22,7 +22,7 @@ namespace restapi.Controllers
                 Reference = "/timesheets"
             });
 
-            links.Add(new DocumentLink()
+            timesheetsLinks.Add(new DocumentLink()
             {
                 Method = Method.Post,
                 Type = ContentTypes.Timesheets,
@@ -30,10 +30,22 @@ namespace restapi.Controllers
                 Reference = "/timesheets"
             });
 
+            var peopleLinks = new List<DocumentLink>();
+            peopleLinks.Add(new DocumentLink()
+            {
+                Method = Method.Get,
+                Type = ContentTypes.People,
+                Relationship = DocumentRelationship.People,
+                Reference = "/people"
+            });
+
             return new Dictionary<ApplicationRelationship, object>()
             {
                 {
-                    ApplicationRelationship.Timesheets, links
+                    ApplicationRelationship.Timesheets, timesheetsLinks
+                },
+                {
+                    ApplicationRelationship.People, peopleLinks
                 },
                 {
                     ApplicationRelationship.Version, "0.1"

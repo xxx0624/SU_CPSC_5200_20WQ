@@ -13,11 +13,14 @@ namespace restapi.Controllers
     {
         private readonly TimesheetsRepository repository;
 
+        private readonly PeopleRepository peopleRepository;
+
         private readonly ILogger logger;
 
         public TimesheetsController(ILogger<TimesheetsController> logger)
         {
             repository = new TimesheetsRepository();
+            peopleRepository = new PeopleRepository();
             this.logger = logger;
         }
 
@@ -54,9 +57,16 @@ namespace restapi.Controllers
         [HttpPost]
         [Produces(ContentTypes.Timesheet)]
         [ProducesResponseType(typeof(Timecard), 200)]
-        public Timecard Create([FromBody] DocumentPerson person)
+        [ProducesResponseType(typeof(MissingPeopleError), 403)]
+        public IActionResult Create([FromBody] DocumentPerson person)
         {
             logger.LogInformation($"Creating timesheet for {person.ToString()}");
+
+            People someone = peopleRepository.Find(person.Id);
+            if(someone == null)
+            {
+                return StatusCode(403, new MissingPeopleError() { });
+            }
 
             var timecard = new Timecard(person.Id);
 
@@ -66,7 +76,7 @@ namespace restapi.Controllers
 
             repository.Add(timecard);
 
-            return timecard;
+            return Ok(timecard);
         }
 
         [HttpDelete("{id:guid}")]
@@ -82,6 +92,12 @@ namespace restapi.Controllers
             if (timecard == null)
             {
                 return NotFound();
+            }
+
+            People someone = peopleRepository.Find(deletion.Person);
+            if(someone == null)
+            {
+                return StatusCode(403, new MissingPeopleError() { });
             }
 
             if (timecard.CanBeDeleted() == false)
@@ -284,6 +300,12 @@ namespace restapi.Controllers
                     return StatusCode(409, new InvalidStateError() { });
                 }
 
+                People someone = peopleRepository.Find(submittal.Person);
+                if(someone == null)
+                {
+                    return StatusCode(403, new MissingPeopleError() { });
+                }
+
                 if (timecard.Lines.Count < 1)
                 {
                     return StatusCode(409, new EmptyTimecardError() { });
@@ -357,6 +379,12 @@ namespace restapi.Controllers
                     return StatusCode(409, new InvalidStateError() { });
                 }
 
+                People someone = peopleRepository.Find(correction.Person);
+                if(someone == null)
+                {
+                    return StatusCode(403, new MissingPeopleError() { });
+                }
+
                 var transition = new Transition(correction, TimecardStatus.Draft);
 
                 logger.LogInformation($"Adding return transition {transition}");
@@ -425,6 +453,12 @@ namespace restapi.Controllers
                     return StatusCode(409, new InvalidStateError() { });
                 }
 
+                People someone = peopleRepository.Find(cancellation.Person);
+                if(someone == null)
+                {
+                    return StatusCode(403, new MissingPeopleError() { });
+                }
+
                 var transition = new Transition(cancellation, TimecardStatus.Cancelled);
 
                 logger.LogInformation($"Adding cancellation transition {transition}");
@@ -491,6 +525,12 @@ namespace restapi.Controllers
                 if (timecard.Status != TimecardStatus.Submitted)
                 {
                     return StatusCode(409, new InvalidStateError() { });
+                }
+
+                People someone = peopleRepository.Find(rejection.Person);
+                if(someone == null)
+                {
+                    return StatusCode(403, new MissingPeopleError() { });
                 }
 
                 var transition = new Transition(rejection, TimecardStatus.Rejected);
@@ -565,6 +605,12 @@ namespace restapi.Controllers
                 if(timecard.Employee == approval.Approver)
                 {
                     return StatusCode(403, new NoAccessError() { });
+                }
+
+                People someone = peopleRepository.Find(approval.Person);
+                if(someone == null)
+                {
+                    return StatusCode(403, new MissingPeopleError() { });
                 }
 
                 var transition = new Transition(approval, TimecardStatus.Approved);

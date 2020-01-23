@@ -15,14 +15,14 @@ namespace restapi.Models
         {
             UniqueIdentifier = Guid.NewGuid();
             Opened = DateTime.UtcNow;
+            Id = id;
         }
 
         [BsonIgnore]
         [JsonProperty("_self")]
         public string Self { get => $"/people/{UniqueIdentifier}"; }
 
-        [JsonIgnore]
-        [BsonId]
+        [JsonProperty("name")]
         public int Id { get; set; }
 
         public DateTime Opened { get; set; }

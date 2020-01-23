@@ -38,11 +38,11 @@ namespace restapi.Controllers
         {
             logger.LogInformation($"Creating people for {person.ToString()}");
 
-            var timecard = new People(person.Id);
+            var p = new People(person.Id);
 
-            repository.Add(timecard);
+            repository.Add(p);
 
-            return timecard;
+            return p;
         }
     }
 }

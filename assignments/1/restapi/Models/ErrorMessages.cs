@@ -27,4 +27,11 @@ namespace restapi.Models
 
         public string Message { get => "No access rights"; }
     }
+
+    public class MissingPeopleError
+    {
+        public int ErrorCode { get => 104; }
+
+        public string Message { get => "Person not exist"; }
+    }
 }

@@ -109,7 +109,7 @@ namespace restapi
             }
         }
 
-        public People Find(Guid id)
+        public People Find(int id)
         {
             People people = null;
 
@@ -118,7 +118,7 @@ namespace restapi
                 var allPeople = database.GetCollection<People>("people");
 
                 people = allPeople
-                    .FindOne(t => t.UniqueIdentifier == id);
+                    .FindOne(t => t.Id == id);
             }
 
             return people;
@@ -144,14 +144,14 @@ namespace restapi
             }
         }
 
-        public void Delete(Guid id)
-        {
-            using (var database = new LiteDatabase(DATABASE_FILE))
-            {
-                var allPeople = database.GetCollection<People>("people");
+        // public void Delete(Guid id)
+        // {
+        //     using (var database = new LiteDatabase(DATABASE_FILE))
+        //     {
+        //         var allPeople = database.GetCollection<People>("people");
 
-                allPeople.Delete(t => t.UniqueIdentifier == id);
-            }
-        }
+        //         allPeople.Delete(t => t.UniqueIdentifier == id);
+        //     }
+        // }
     }
 }
