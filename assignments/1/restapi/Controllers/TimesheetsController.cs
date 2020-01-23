@@ -72,7 +72,8 @@ namespace restapi.Controllers
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult Delete(Guid id)
+        [ProducesResponseType(typeof(NoAccessError), 403)]
+        public IActionResult Delete(Guid id, [FromBody] Deletion deletion)
         {
             logger.LogInformation($"Looking for timesheet {id}");
 
@@ -86,6 +87,11 @@ namespace restapi.Controllers
             if (timecard.CanBeDeleted() == false)
             {
                 return StatusCode(409, new InvalidStateError() { });
+            }
+
+            if(deletion.Deleter != timecard.Employee)
+            {
+                return StatusCode(403, new NoAccessError() { });
             }
 
             repository.Delete(id);
