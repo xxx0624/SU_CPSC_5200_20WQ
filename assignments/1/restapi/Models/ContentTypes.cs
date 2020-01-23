@@ -10,6 +10,8 @@ namespace restapi.Models
 
         public const string Timesheets = "application/com.my-company.my-product.timesheets+json";
 
+        public const string People = "application/com.my-company.my-product.timesheet+json";
+
         public const string TimesheetLine = "application/com.my-company.my-product.timesheet-line+json";
 
         public const string TimesheetLines = "application/com.my-company.my-product.timesheet-lines+json";

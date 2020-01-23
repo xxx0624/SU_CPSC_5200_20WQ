@@ -80,4 +80,78 @@ namespace restapi
             }
         }
     }
+
+    public class PeopleRepository
+    {
+        const string DATABASE_FILE = "filename=people.db;mode=exclusive";
+
+        static PeopleRepository()
+        {
+            using (var database = new LiteDatabase(DATABASE_FILE))
+            {
+                var people = database.GetCollection<People>("people");
+
+                people.EnsureIndex(t => t.UniqueIdentifier);
+            }
+        }
+
+
+        public IEnumerable<People> All
+        {
+            get
+            {
+                using (var database = new LiteDatabase(DATABASE_FILE))
+                {
+                    var allPeople = database.GetCollection<People>("people");
+
+                    return allPeople.Find(Query.All()).ToList();
+                }
+            }
+        }
+
+        public People Find(Guid id)
+        {
+            People people = null;
+
+            using (var database = new LiteDatabase(DATABASE_FILE))
+            {
+                var allPeople = database.GetCollection<People>("people");
+
+                people = allPeople
+                    .FindOne(t => t.UniqueIdentifier == id);
+            }
+
+            return people;
+        }
+
+        public void Add(People people)
+        {
+            using (var database = new LiteDatabase(DATABASE_FILE))
+            {
+                var allPeople = database.GetCollection<People>("people");
+
+                allPeople.Insert(people);
+            }
+        }
+
+        public void Update(People people)
+        {
+            using (var database = new LiteDatabase(DATABASE_FILE))
+            {
+                var allPeople = database.GetCollection<People>("people");
+
+                allPeople.Update(people);
+            }
+        }
+
+        public void Delete(Guid id)
+        {
+            using (var database = new LiteDatabase(DATABASE_FILE))
+            {
+                var allPeople = database.GetCollection<People>("people");
+
+                allPeople.Delete(t => t.UniqueIdentifier == id);
+            }
+        }
+    }
 }
