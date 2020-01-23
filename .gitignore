@@ -6,4 +6,5 @@ submissions/
 bin/
 obj/
 timesheets.db
+people.db
 ~*
