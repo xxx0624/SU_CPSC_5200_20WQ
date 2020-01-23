@@ -20,7 +20,7 @@ namespace restapi.Models
             Transitions = new List<Transition>();
         }
 
-        public int Employee { get; set; }
+        public int Employee { get; private set; }
 
         public TimecardStatus Status
         {
