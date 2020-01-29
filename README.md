@@ -25,24 +25,24 @@ As a result of that we will not (at this time) have a textbook. I will recommend
 ## Important Dates
 
 **Week 1**
-[x] 07-Jan: **First day of class**
-[x] 07-Jan: Introduction to Software Architecture and Design
-[x] 09-Jan: REST as an architectural style
+- [x] 07-Jan: **First day of class**
+- [x] 07-Jan: Introduction to Software Architecture and Design
+- [x] 09-Jan: REST as an architectural style
 
 **Week 2**
-[x] 14-Jan: **no class, weather-related**
-[x] 16-Jan: Software Architecture, An opinionated approach
+- [x] 14-Jan: **no class, weather-related**
+- [x] 16-Jan: Software Architecture, An opinionated approach
 
 **Week 3**
-[x] 21-Jan: Introduction to UML (https://seattleu.zoom.us/j/289933070)
-[x] 23-Jan: Agile software architecture I
-[x] 23-Jan: **Individual assignment 1 due**
+- [x] 21-Jan: Introduction to UML (https://seattleu.zoom.us/j/289933070)
+- [x] 23-Jan: Agile software architecture I
+- [x] 23-Jan: **Individual assignment 1 due**
 
 **Week 4**
-[ ] 28-Jan: Agile software architecture II
-[ ] 28-Jan: API Design
-[ ] 28-Jan: **Team project introduction**
-[ ] 30-Jan: Architecture patterns and styles
+- [ ] 28-Jan: Agile software architecture II
+- [ ] 28-Jan: API Design
+- [ ] 28-Jan: **Team project introduction**
+- [ ] 30-Jan: Architecture patterns and styles
 
 **Week 5**
 [ ] 04-Feb: Non-functional requirements (_guest lecture_)
